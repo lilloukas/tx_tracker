@@ -65,7 +65,7 @@ def main(args):
                 response = requests.get(base_url, params=params)
 
                 transaction_list = response.json()["result"][0]
-                print(transaction_list)
+                # print(transaction_list)
                 # Compare the most recent transaction hashes, if new hash, notify user
                 transaction_id = transaction_list["hash"]
                 # print(transaction_id)
