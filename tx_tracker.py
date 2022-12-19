@@ -52,29 +52,20 @@ def main(args):
                 address = hash_info[0]
                 # Set the parameters for the API request to get the current block number
                 params = {
-                    "module": "proxy",
-                    "action": "eth_blockNumber",
+                    "module": "account",
+                    "action": "txlist",
+                    "address": address,
+                    "startblock": 0,
+                    "endblock": 99999999,
+                    "sort": "desc",
                     "apikey": api_key
                 }
 
-                # Make the request to the Etherscan API to get the current block number
-                response = requests.get(base_url, params=params)
-                current_block_number = response.json()["result"]
-
-                # Set the parameters for the API request
-                params = {
-                    "module": "proxy",
-                    "action": "eth_getTransactionByBlockNumberAndIndex",
-                    "blocknumber": current_block_number,
-                    "index": "0x0",  # Set the index to 0 to retrieve the first (most recent) transaction in the block
-                    "apikey": api_key
-                }
-
-                # Make the request to the Etherscan API to get the most recent transaction
+                # Make the request to the Etherscan API
                 response = requests.get(base_url, params=params)
 
-                transaction_list = response.json()["result"]
-                # print(transaction_list["hash"])
+                transaction_list = response.json()["result"][0]
+                print(transaction_list)
                 # Compare the most recent transaction hashes, if new hash, notify user
                 transaction_id = transaction_list["hash"]
                 # print(transaction_id)
@@ -84,14 +75,14 @@ def main(args):
                     transaction_link = f"https://etherscan.io/tx/{transaction_id}"
                     
                     # Get value of the transaction
-                    transaction_value = int(transaction_list["value"],16)/1000000000000000000
+                    transaction_value = float(transaction_list["value"])/1000000000000000000
                     if transaction_value == 0:
                         transaction_value_formatted = "0"
                     else:
                         transaction_value_formatted = "{:.6f}".format(transaction_value).rstrip('0').rstrip('.')
 
                     # Get the gas price of the transaction
-                    transaction_gas_price = int(transaction_list["gasPrice"],16)/1000000000000000000
+                    transaction_gas_price = float(transaction_list["gasPrice"])/1000000000000000000
                     transaction_gas_price_formatted = "{:.10f}".format(transaction_gas_price).rstrip('0').rstrip('.')
 
                     # notify("New Transaction", f"There is a new transaction on the Ethereum account {address}.", transaction_link)
