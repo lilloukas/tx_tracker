@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 def is_valid_hash(last_hash):
     # Check that the last transaction hash starts with "0x" and is 66 characters long
     if not (last_hash.startswith("0x") and len(last_hash) == 66):
@@ -32,7 +33,10 @@ def address_already_exists(address,lines):
 def main():
     
     print("Enter name, address, and last transaction hash.\nThe name must not be empty.\nThe address must be a new, valid Ethereum address.\nThe last transaction hash must be a valid Ethereum transaction hash.\n\nEnter 'quit' to exit the program.")
-
+    if not os.path.exists('hashes.txt'):
+        # Create the file if it does not exist
+        with open('hashes.txt', 'w') as f:
+            pass
 
     with open("hashes.txt", "r") as f:
         lines = [tuple(line.split()) for line in f]
@@ -43,7 +47,8 @@ def main():
         while not name:
             print("Error: Please enter a name.")
             name = input("Name: ")
-        
+        # Replace any spaces in the name with a dash
+        name = name.replace(" ", "-")
         # Check if the user entered "quit"
         if name.lower() == "quit":
             return 0

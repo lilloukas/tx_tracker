@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
 import requests
-import os
 import time
+import os
 from pync import Notifier
-# Define the notify function
-# def notify(title, text, link):
-#     # Display the notification
-#     # os.system("""
-#     #           osascript -e 'display notification "{}" with title "{}" actions ["Open Link"]'
-#     #           """.format(text, title))
-#     # Open the link when the notification is clicked
-#     os.system(f"open -a '/Applications/Google Chrome.app' '{link}'")
-
+import argparse
 # def notify(title,text,link):
 #     Notifier.notify(text,title = title,open=link)
 api_key = "JUXT14RB9AIYHKT2MZTAWGP85UBH3Y6UER"
@@ -26,7 +18,13 @@ def save_last(all_hashes):
         for name, (address, last_hash) in all_hashes.items():
             # Write the name, address, and last transaction hash to the file
             f.write(f"{name} {address} {last_hash}\n")
-def main():
+def main(args):
+    # Check if the file exists
+    if not os.path.exists('hashes.txt'):
+        # Create the file if it does not exist
+        print('"hashes.txt" file does not exist.') 
+        print('Use "add_hashes.py" to add addresses to track.')
+        return 0
         # Read in the last saved values for your addresses of interest
     with open("hashes.txt", "r") as f:
         all_hashes = {}
@@ -51,47 +49,61 @@ def main():
                 base_url = "https://api.etherscan.io/api?"
 
                 # Set the address and API key
-                # address = "0xba19c073c28f203d9fe23eefefa01a6d2562360f"
-                # address = "0xe749e9E7EAa02203c925A036226AF80e2c79403E"
                 address = hash_info[0]
-                
-                # Set the parameters for the API request
+                # Set the parameters for the API request to get the current block number
                 params = {
-                    "module": "account",
-                    "action": "txlist",
-                    "address": address,
-                    "startblock": 0,
-                    "endblock": 99999999,
-                    "sort": "desc",
+                    "module": "proxy",
+                    "action": "eth_blockNumber",
                     "apikey": api_key
                 }
 
-                # Make the request to the Etherscan API
+                # Make the request to the Etherscan API to get the current block number
+                response = requests.get(base_url, params=params)
+                current_block_number = response.json()["result"]
+
+                # Set the parameters for the API request
+                params = {
+                    "module": "proxy",
+                    "action": "eth_getTransactionByBlockNumberAndIndex",
+                    "blocknumber": current_block_number,
+                    "index": "0x0",  # Set the index to 0 to retrieve the first (most recent) transaction in the block
+                    "apikey": api_key
+                }
+
+                # Make the request to the Etherscan API to get the most recent transaction
                 response = requests.get(base_url, params=params)
 
                 transaction_list = response.json()["result"]
+                # print(transaction_list["hash"])
                 # Compare the most recent transaction hashes, if new hash, notify user
-                transaction_id = transaction_list[0]["hash"]
+                transaction_id = transaction_list["hash"]
                 # print(transaction_id)
                 if transaction_id != hash_info[1]:
-                    # print("New Transaction")
-
-                    # Get the transaction ID of the first transaction in the list
-                    # transaction_id = transaction_list[0]["hash"]
 
                     # Construct the link to the transaction
                     transaction_link = f"https://etherscan.io/tx/{transaction_id}"
+                    
+                    # Get value of the transaction
+                    transaction_value = int(transaction_list["value"],16)/1000000000000000000
+                    if transaction_value == 0:
+                        transaction_value_formatted = "0"
+                    else:
+                        transaction_value_formatted = "{:.6f}".format(transaction_value).rstrip('0').rstrip('.')
 
-                    # # Print the link to the transaction
-                    # print(transaction_link)
+                    # Get the gas price of the transaction
+                    transaction_gas_price = int(transaction_list["gasPrice"],16)/1000000000000000000
+                    transaction_gas_price_formatted = "{:.10f}".format(transaction_gas_price).rstrip('0').rstrip('.')
 
                     # notify("New Transaction", f"There is a new transaction on the Ethereum account {address}.", transaction_link)
-                    Notifier.notify(f"There is a new transaction on {name}.",open=transaction_link)
+                    Notifier.notify(f"There is a new transaction on {name}.\nValue: {transaction_value_formatted} eth\nGas Price: {transaction_gas_price_formatted} eth",open=transaction_link)
                     all_hashes[name]=[hash_info[0],transaction_id]
 
-                    time.sleep(1)
+                time.sleep(args.buffer)
     except KeyboardInterrupt:
         save_last(all_hashes)
         exit
 if __name__ == "__main__":
-    main()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--buffer", "-b", help="Time in seconds to wait between checks", type=int, default=1,required=False)
+    args = argparser.parse_args()
+    main(args)
