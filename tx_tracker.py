@@ -111,9 +111,9 @@ def main(args):
                         transaction_value_formatted = "{:.6f}".format(transaction_value).rstrip('0').rstrip('.')
 
                     # Get the gas price of the transaction
-                    transaction_gas_price = float(transaction_list["gasPrice"])/1000000000000000000
-                    transaction_gas_used = float(transaction_list["gasUsed"])/1000000000000000000
-                    transaction_fee_formatted = "{:.10f}".format(transaction_gas_price*transaction_gas_used).rstrip('0').rstrip('.')
+                    transaction_gas_price = float(transaction_list["gasPrice"])
+                    transaction_gas_used = float(transaction_list["gasUsed"])
+                    transaction_fee_formatted = "{:.10f}".format((transaction_gas_price*transaction_gas_used)/1000000000000000000).rstrip('0').rstrip('.')
 
                     # notify("New Transaction", f"There is a new transaction on the Ethereum account {address}.", transaction_link)
                     Notifier.notify(f"There is a new transaction on {name}.\nValue: {transaction_value_formatted} eth\nTransaction Fee: {transaction_fee_formatted} eth",open=transaction_link)
@@ -131,7 +131,7 @@ def main(args):
 
                     internal_response = requests.get(base_url, params=internal_params)
                     transaction_list_internal = internal_response.json()["result"][0]
-     
+                    
                     # Compare the most recent transaction hashes, if new hash, notify user
                     transaction_id_internal = transaction_list_internal["hash"]
                     if transaction_id_internal != hash_info[2]:
