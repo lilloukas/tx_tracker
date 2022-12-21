@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ```
 If you didn't update the permissions on the files, do the following instead
 ```
-python3 add_adresses.py
+python3 add_addresses.py
 ```
 5. Run tx_tracker
 ```
