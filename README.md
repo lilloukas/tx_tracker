@@ -10,6 +10,7 @@ cd tx_tracker
 ```
 chmod +x add_addresses.py
 chmod +x tx_tracker.py
+chmod +x all_downloads.py
 ```
 3. Download all required installs
 ```
@@ -33,6 +34,13 @@ If you didn't update the permissions on the files, do the following instead
 ```
 python3 tx_tracker.py
 ```
-
+6. Run all_downloads.py
+```
+./all_downloads.py
+```
+If you didn't update the permissions on the files, do the following instead
+```
+python3 all_downloads.py
+```
 The default is to check each address for new updates with a 1 second buffer between requesting for normal vs internal transaction, and a 5 second buffer before displaying the updates on internal transactions.
 
