@@ -201,7 +201,6 @@ def main(args):
 
     # Check if the file exists
     if not os.path.exists('my_addresses.txt'):
-        # Create the file if it does not exist
         print('"my_addresses.txt" file does not exist.') 
         print('Use "update_my_addresses.py" to add addresses to track.')
         return 0
