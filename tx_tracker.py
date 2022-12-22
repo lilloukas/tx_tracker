@@ -6,7 +6,7 @@ from pync import Notifier
 import argparse
 # def notify(title,text,link):
 #     Notifier.notify(text,title = title,open=link)
-api_key = "JUXT14RB9AIYHKT2MZTAWGP85UBH3Y6UER"
+# api_key = "JUXT14RB9AIYHKT2MZTAWGP85UBH3Y6UER"
 base_url = "https://api.etherscan.io/api?"
 
 # def save_last(last_hash):
@@ -160,8 +160,15 @@ def main(args):
         save_last(all_hashes)
         exit
 if __name__ == "__main__":
+    # Check if you've got an API key
+    if not os.path.exists('api_key.txt'):
+        print('"api_key.txt" file does not exist.') 
+        print('Use "update_api.py" to get an API key.')
+        exit
+    api_key = open("api_key.txt").read()
+
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--buffer", "-b", help="Time in seconds to wait between checks", type=int, default=1,required=False)
+    argparser.add_argument("--buffer", "-b", help="Time in seconds to wait between checks", type=float, default=1,required=False)
     argparser.add_argument("--internal", "-i", help="Update on internal transactions. Defaults to True.", type=bool, default = True, required=False)
     args = argparser.parse_args()
     main(args)
