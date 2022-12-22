@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 import requests
-import datetime
 import os
 import pandas as pd
 import openpyxl
 import time
 import argparse
+from tqdm import tqdm
 def get_transactions(addresses, api_key,args):
     transactions_list = []
-    for address in addresses:
+    for address in tqdm(addresses, desc="Getting transactions"):
         # Set the parameters for the API request to get the transactions for the specified address
         params = {
             "module": "account",
@@ -50,7 +50,7 @@ def get_transactions(addresses, api_key,args):
 
 def get_internal_transactions(addresses, api_key,args):
     transactions_list = []
-    for address in addresses:
+    for address in tqdm(addresses, desc="Getting internal transactions"):
         params = {
         "module": "account",
         "action": "txlistinternal",  # Use the tokennftx action
@@ -86,7 +86,7 @@ def get_internal_transactions(addresses, api_key,args):
 
 def get_erc20_transactions(addresses, api_key,args):
     transactions_list = []
-    for address in addresses:
+    for address in tqdm(addresses, desc="Getting ERC20 transactions"):
         # Set the parameters for the API request to get the ERC20 transactions for the specified address
         params = {
             "module": "account",
@@ -123,7 +123,7 @@ def get_erc20_transactions(addresses, api_key,args):
 
 def get_erc721_transactions(addresses, api_key,args):
     transactions_list = []
-    for address in addresses:
+    for address in tqdm(addresses, desc="Getting ERC721 transactions"):
         # Set the parameters for the API request to get the ERC721 transactions for the specified address
         params = {
             "module": "account",
@@ -161,7 +161,7 @@ def get_erc721_transactions(addresses, api_key,args):
 
 def get_erc1155_transactions(addresses, api_key,args):
     transactions_list = []
-    for address in addresses:
+    for address in tqdm(addresses, desc="Getting ERC1155 transactions"):
         # Set the parameters for the API request to get the ERC1155 transactions for the specified address
         params = {
             "module": "account",
