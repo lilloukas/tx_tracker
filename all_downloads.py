@@ -24,6 +24,7 @@ def get_transactions(addresses, api_key,args):
         response = requests.get("https://api.etherscan.io/api", params=params)
         if response.json()["message"] == "No transactions found":
             tqdm.write(f"No transactions found for address {address} in the transactions.")
+            time.sleep(args.delay)
         else:
             if response.status_code == 200:
                 data = response.json()
@@ -48,6 +49,7 @@ def get_transactions(addresses, api_key,args):
             else:
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
+
     return df
 
 def get_internal_transactions(addresses, api_key,args):
@@ -65,6 +67,7 @@ def get_internal_transactions(addresses, api_key,args):
         response = requests.get("https://api.etherscan.io/api", params=params)
         if response.json()["message"] == "No transactions found":
             tqdm.write(f"No transactions found for address {address} in internal transactions.")
+            time.sleep(args.delay)
         else:
             if response.status_code == 200:
                 data = response.json()
@@ -90,6 +93,7 @@ def get_internal_transactions(addresses, api_key,args):
 
 def get_erc20_transactions(addresses, api_key,args):
     transactions_list = []
+
     for address in tqdm(addresses, desc="Getting ERC20 transactions"):
         # Set the parameters for the API request to get the ERC20 transactions for the specified address
         params = {
@@ -104,6 +108,7 @@ def get_erc20_transactions(addresses, api_key,args):
         response = requests.get("https://api.etherscan.io/api", params=params)
         if response.json()["message"] == "No transactions found":
             tqdm.write(f"No transactions found for address {address} in the ERC20 module.")
+            time.sleep(args.delay)
         else:
             if response.status_code == 200:
                 data = response.json()
@@ -125,8 +130,11 @@ def get_erc20_transactions(addresses, api_key,args):
             else:
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
-
-    return pd.concat(transactions_list)
+    try:
+        return df
+    except UnboundLocalError as e:
+        print('No ERC20 transactions found for any addresses, returning empty dataframe.')
+        return pd.DataFrame()
 
 def get_erc721_transactions(addresses, api_key,args):
     transactions_list = []
@@ -144,6 +152,7 @@ def get_erc721_transactions(addresses, api_key,args):
         response = requests.get("https://api.etherscan.io/api", params=params)
         if response.json()["message"] == "No transactions found":
             tqdm.write(f"No transactions found for address {address} in the ERC721 module.")
+            time.sleep(args.delay)
         else:
             if response.status_code == 200:
                 data = response.json()
@@ -165,7 +174,11 @@ def get_erc721_transactions(addresses, api_key,args):
             else:
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
-    return pd.concat(transactions_list)
+    try:
+        return df
+    except UnboundLocalError as e:
+        print('No ERC721 transactions found for any addresses, returning empty dataframe.')
+        return pd.DataFrame()
 
 
 def get_erc1155_transactions(addresses, api_key,args):
@@ -184,6 +197,7 @@ def get_erc1155_transactions(addresses, api_key,args):
         response = requests.get("https://api.etherscan.io/api", params=params)
         if response.json()["message"] == "No transactions found":
             tqdm.write(f"No transactions found for address {address} in the ERC1155 module.")
+            time.sleep(args.delay)
         else:
             if response.status_code == 200:
                 data = response.json()
@@ -205,7 +219,12 @@ def get_erc1155_transactions(addresses, api_key,args):
             else:
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
-    return pd.concat(transactions_list)
+    
+    try:
+        return df
+    except UnboundLocalError as e:
+        print('No ERC1155 transactions found for any addresses, returning empty dataframe.')
+        return pd.DataFrame()
 
 def main(args):
     # Check if api_key.txt exists
