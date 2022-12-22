@@ -46,7 +46,7 @@ def get_transactions(addresses, api_key,args):
         else:
             print("An error occurred:", response.status_code)
         time.sleep(args.delay)
-        return df
+    return df
 
 def get_internal_transactions(addresses, api_key,args):
     transactions_list = []
