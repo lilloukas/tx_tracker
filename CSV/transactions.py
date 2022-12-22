@@ -2,7 +2,7 @@
 import requests
 import datetime
 import os
-
+import re
 def main():
     api_key = "JUXT14RB9AIYHKT2MZTAWGP85UBH3Y6UER"
 
@@ -22,7 +22,7 @@ def main():
     # Open the CSV file for writing
     with open("transactions.csv", "w") as f:
         # Write the column headers
-        f.write("Date,From,To,Hash,Value,Gas,GasPrice\n")
+        f.write("Date,From,To,Hash,Value,Gas,GasPrice,Method\n")
 
         for address in addresses:
             # Set the parameters for the API request to get the transactions for the specified address
@@ -51,7 +51,12 @@ def main():
                     gas_price = int(transaction["gasPrice"]) / 10**18  # Convert the gas price to ETH
                     _hash = transaction["hash"]
                     value = int(transaction["value"]) / 10**18  # Convert the value to ETH
-                    f.write(f"{date},{from_address},{to_address},{_hash},{value},{gas},{gas_price}\n")
+
+                    method = transaction["functionName"]
+                    start_index = method.find("(")
+                    method = method[:start_index]
+                    
+                    f.write(f"{date},{from_address},{to_address},{_hash},{value},{gas},{gas_price},{method}\n")
             else:
                 print("An error occurred:", response.status_code)
 
