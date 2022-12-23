@@ -50,7 +50,12 @@ def get_transactions(addresses, api_key,args):
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
 
-    return df
+    try:
+        return pd.concat(transactions_list)
+    except UnboundLocalError as e:
+        print('No transactions found for any addresses, returning empty dataframe.')
+        return pd.DataFrame()
+
 
 def get_internal_transactions(addresses, api_key,args):
     transactions_list = []
@@ -89,7 +94,12 @@ def get_internal_transactions(addresses, api_key,args):
             else:
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
-    return df
+    try:
+        return pd.concat(transactions_list)
+    except UnboundLocalError as e:
+        print('No internal transactions found for any addresses, returning empty dataframe.')
+        return pd.DataFrame()
+
 
 def get_erc20_transactions(addresses, api_key,args):
     transactions_list = []
@@ -131,7 +141,7 @@ def get_erc20_transactions(addresses, api_key,args):
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
     try:
-        return df
+        return pd.concat(transactions_list)
     except UnboundLocalError as e:
         print('No ERC20 transactions found for any addresses, returning empty dataframe.')
         return pd.DataFrame()
@@ -175,7 +185,7 @@ def get_erc721_transactions(addresses, api_key,args):
                 print("An error occurred:", response.status_code)
             time.sleep(args.delay)
     try:
-        return df
+        return pd.concat(transactions_list)
     except UnboundLocalError as e:
         print('No ERC721 transactions found for any addresses, returning empty dataframe.')
         return pd.DataFrame()
@@ -221,7 +231,7 @@ def get_erc1155_transactions(addresses, api_key,args):
             time.sleep(args.delay)
     
     try:
-        return df
+        return pd.concat(transactions_list)
     except UnboundLocalError as e:
         print('No ERC1155 transactions found for any addresses, returning empty dataframe.')
         return pd.DataFrame()
