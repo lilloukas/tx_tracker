@@ -82,7 +82,9 @@ def main(args):
                     transaction_fee_formatted = "{:.10f}".format((transaction_gas_price*transaction_gas_used)/1000000000000000000).rstrip('0').rstrip('.')
 
                     # notify("New Transaction", f"There is a new transaction on the Ethereum account {address}.", transaction_link)
-                    Notifier.notify(f"There is a new transaction on {name}.\nValue: {transaction_value_formatted} eth\nTransaction Fee: {transaction_fee_formatted} eth",open=transaction_link)
+                    Notifier.notify(f"There is a new transaction on {name}.\nValue: {transaction_value_formatted} eth\nTransaction Fee: {transaction_fee_formatted} eth",
+                    title='Etherscan',
+                    open=transaction_link)
                     # all_hashes[name]=[hash_info[0],transaction_id,hash_info[2]]
                     print(name,hash_info[0],transaction_id,hash_info[2])
                 time.sleep(args.buffer)
