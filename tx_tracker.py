@@ -4,42 +4,8 @@ import time
 import os
 from pync import Notifier
 import argparse
-# def notify(title,text,link):
-#     Notifier.notify(text,title = title,open=link)
-# api_key = "JUXT14RB9AIYHKT2MZTAWGP85UBH3Y6UER"
+
 base_url = "https://api.etherscan.io/api?"
-
-# def save_last(last_hash):
-#     with open("big_num.txt", "w") as f:
-#         f.write(str(last_hash))
-# def check_values(name,base_url,params,hash_info):
-#          # Make the request to the Etherscan API
-#         response = requests.get(base_url, params=params)
-
-#         transaction_list = response.json()["result"][0]
-#         # print(transaction_list)
-#         # Compare the most recent transaction hashes, if new hash, notify user
-#         transaction_id = transaction_list["hash"]
-#         # print(transaction_id)
-#         if transaction_id != hash_info[1]:
-
-#             # Construct the link to the transaction
-#             transaction_link = f"https://etherscan.io/tx/{transaction_id}"
-            
-#             # Get value of the transaction
-#             transaction_value = float(transaction_list["value"])/1000000000000000000
-#             if transaction_value == 0:
-#                 transaction_value_formatted = "0"
-#             else:
-#                 transaction_value_formatted = "{:.6f}".format(transaction_value).rstrip('0').rstrip('.')
-
-#             # Get the gas price of the transaction
-#             transaction_gas_price = float(transaction_list["gasPrice"])/1000000000000000000
-#             transaction_gas_price_formatted = "{:.10f}".format(transaction_gas_price).rstrip('0').rstrip('.')
-
-#             # notify("New Transaction", f"There is a new transaction on the Ethereum account {address}.", transaction_link)
-#             Notifier.notify(f"There is a new transaction on {name}.\nValue: {transaction_value_formatted} eth\nGas Price: {transaction_gas_price_formatted} eth",open=transaction_link)
-#             return transaction_id
 
 def save_last(all_hashes):
     with open("hashes.txt", "w") as f:
@@ -84,8 +50,8 @@ def main(args):
                     "module": "account",
                     "action": "txlist",
                     "address": address,
-                    "startblock": 0,
-                    "endblock": 99999999,
+                    "page": 1,
+                    "offset": 1,
                     "sort": "desc",
                     "apikey": api_key
                 }
@@ -125,6 +91,8 @@ def main(args):
                         "module": "account",
                         "action": "txlistinternal",  # Use the tokennftx action
                         "address": address,
+                        "page": 1,
+                        "offset": 1,
                         "sort": "desc",  
                         "apikey": api_key
                     }
@@ -149,7 +117,7 @@ def main(args):
                         # # Get the gas price of the transaction
                         # transaction_gas_price_internal = float(transaction_list_internal["gasPrice"])/1000000000000000000
                         # transaction_gas_price_formatted_internal = "{:.10f}".format(transaction_gas_price_internal).rstrip('0').rstrip('.')
-                        time.sleep(args.buffer+4)
+                        time.sleep(args.buffer)
                         # Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: {transaction_gas_price_formatted_internal} eth",open=transaction_link_internal)
                         Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: TDB eth",open=transaction_link_internal)
                         all_hashes[name]=[hash_info[0],transaction_id,transaction_id_internal]
