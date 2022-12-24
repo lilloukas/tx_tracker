@@ -119,7 +119,7 @@ def main(args):
                         # # Get the gas price of the transaction
                         # transaction_gas_price_internal = float(transaction_list_internal["gasPrice"])/1000000000000000000
                         # transaction_gas_price_formatted_internal = "{:.10f}".format(transaction_gas_price_internal).rstrip('0').rstrip('.')
-                        time.sleep(args.buffer)
+                        
                         # Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: {transaction_gas_price_formatted_internal} eth",open=transaction_link_internal)
                         Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: TDB eth",
                         title='Etherscan',
@@ -128,9 +128,18 @@ def main(args):
                         print(name,hash_info[0],transaction_id,transaction_id_internal)
                     else:
                         all_hashes[name]=[hash_info[0],transaction_id,hash_info[2]]
-    except KeyboardInterrupt:
-        save_last(all_hashes)
-        exit
+                    time.sleep(args.buffer)
+    # add in the exception for when the user presses ctrl+c or when there is a TypeError
+    except (KeyboardInterrupt,TypeError) as e:
+        if isinstance(e,KeyboardInterrupt):
+            print('here')
+            save_last(all_hashes)
+            exit
+        else:
+            Notifier.notify(f"Too many api requests,update api key with update_api.py",
+                        title='Etherscan')
+            exit
+
 if __name__ == "__main__":
     # Check if you've got an API key
     if not os.path.exists('api_key.txt'):
