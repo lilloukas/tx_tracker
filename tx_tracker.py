@@ -190,7 +190,6 @@ if __name__ == "__main__":
     api_key = []
     for line in open('api_key.txt'):
         api_key.append(line.strip())
-    print(api_key)
     api_key_number = 0
     # api_key = open("api_key.txt").read()
 
