@@ -173,8 +173,6 @@ def main(args,api_key,api_key_number):
             save_last(all_hashes)
             exit
         else:
-            print(response.json())
-            print(internal_response.json())
             save_last(all_hashes)
             Notifier.notify(f"Too many api requests,update api key with update_api.py",
                         title='Etherscan')
