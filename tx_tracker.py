@@ -7,13 +7,39 @@ import argparse
 
 base_url = "https://api.etherscan.io/api?"
 
+def new_internal_params(api_key,address,api_key_number):
+    internal_params= {
+        "module": "account",
+        "action": "txlistinternal",  # Use the tokennftx action
+        "address": address,
+        "page": 1,
+        "offset": 1,
+        "sort": "desc",  
+        "apikey": api_key[api_key_number]
+    }
+    internal_response = requests.get(base_url, params=internal_params)
+    return internal_response
+
+def new_params(api_key,address,api_key_number):
+    params = {
+        "module": "account",
+        "action": "txlist",
+        "address": address,
+        "page": 1,
+        "offset": 1,
+        "sort": "desc",
+        "apikey": api_key[api_key_number]
+    }
+    response = requests.get(base_url, params=params)
+    return response
+
 def save_last(all_hashes):
     with open("hashes.txt", "w") as f:
         # Iterate over the items in the dictionary
         for name, (address, last_hash,last_internal_hash) in all_hashes.items():
             # Write the name, address, and last transaction hash to the file
             f.write(f"{name} {address} {last_hash} {last_internal_hash}\n")
-def main(args):
+def main(args,api_key,api_key_number):
     # Check if the file exists
     if not os.path.exists('hashes.txt'):
         # Create the file if it does not exist
@@ -53,13 +79,19 @@ def main(args):
                     "page": 1,
                     "offset": 1,
                     "sort": "desc",
-                    "apikey": api_key
+                    "apikey": api_key[api_key_number]
                 }
 
                 # Make the request to the Etherscan API
                 response = requests.get(base_url, params=params)
-
+                if response.json()["message"] == "NOTOK":
+                        print('Too many requests, updating api key')
+                        api_key_number = api_key_number + 1
+                        if api_key_number>=len(api_key)-1:
+                            api_key_number = 0
+                        response = new_params(api_key,address,api_key_number)
                 transaction_list = response.json()["result"][0]
+
                 # print(transaction_list)
                 # Compare the most recent transaction hashes, if new hash, notify user
                 transaction_id = transaction_list["hash"]
@@ -96,12 +128,18 @@ def main(args):
                         "page": 1,
                         "offset": 1,
                         "sort": "desc",  
-                        "apikey": api_key
+                        "apikey": api_key[api_key_number]
                     }
 
                     internal_response = requests.get(base_url, params=internal_params)
+                    if internal_response.json()["message"] == "NOTOK":
+                        print('Too many requests, updating api key')
+                        api_key_number = api_key_number + 1
+                        if api_key_number>=len(api_key)-1:
+                            api_key_number = 0
+                        internal_response = new_internal_params(api_key,address,api_key_number)
                     transaction_list_internal = internal_response.json()["result"][0]
-                    
+
                     # Compare the most recent transaction hashes, if new hash, notify user
                     transaction_id_internal = transaction_list_internal["hash"]
                     if transaction_id_internal != hash_info[2]:
@@ -132,10 +170,12 @@ def main(args):
     # add in the exception for when the user presses ctrl+c or when there is a TypeError
     except (KeyboardInterrupt,TypeError) as e:
         if isinstance(e,KeyboardInterrupt):
-            print('here')
             save_last(all_hashes)
             exit
         else:
+            print(response.json())
+            print(internal_response.json())
+            save_last(all_hashes)
             Notifier.notify(f"Too many api requests,update api key with update_api.py",
                         title='Etherscan')
             exit
@@ -146,10 +186,16 @@ if __name__ == "__main__":
         print('"api_key.txt" file does not exist.') 
         print('Use "update_api.py" to get an API key.')
         exit
-    api_key = open("api_key.txt").read()
+    # Read each line of the file and store it in a list
+    api_key = []
+    for line in open('api_key.txt'):
+        api_key.append(line.strip())
+    print(api_key)
+    api_key_number = 0
+    # api_key = open("api_key.txt").read()
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--buffer", "-b", help="Time in seconds to wait between checks", type=float, default=1,required=False)
     argparser.add_argument("--internal", "-i", help="Update on internal transactions. Defaults to True.", type=bool, default = True, required=False)
     args = argparser.parse_args()
-    main(args)
+    main(args,api_key,api_key_number)
