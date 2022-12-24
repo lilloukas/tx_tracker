@@ -121,7 +121,9 @@ def main(args):
                         # transaction_gas_price_formatted_internal = "{:.10f}".format(transaction_gas_price_internal).rstrip('0').rstrip('.')
                         time.sleep(args.buffer)
                         # Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: {transaction_gas_price_formatted_internal} eth",open=transaction_link_internal)
-                        Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: TDB eth",open=transaction_link_internal)
+                        Notifier.notify(f"There is a new internal transaction on {name}.\nValue: {transaction_value_formatted_internal} eth\nGas Price: TDB eth",
+                        title='Etherscan',
+                        open=transaction_link_internal)
                         all_hashes[name]=[hash_info[0],transaction_id,transaction_id_internal]
                         print(name,hash_info[0],transaction_id,transaction_id_internal)
                     else:
