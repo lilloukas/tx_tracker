@@ -8,8 +8,7 @@ import time
 import argparse
 from tqdm import tqdm
 import subprocess
-def to_eth(wei_value):
-    return int(wei_value) / 10**18
+
 
 # def get_transactions(addresses, api_key,args):
 #     transactions_list = []
@@ -82,11 +81,11 @@ def get_transactions(addresses, api_key,args):
                 transactions = data["result"]
                 # Read the data into a dataframe
                 df = pd.DataFrame(transactions)
-                df['value'] = df['value'].apply(to_eth)
-                df['gas'] = df['gas'].apply(to_eth)
-                df['gasUsed'] = df['gasUsed'].apply(to_eth)
-                df['gasPrice'] = df['gasPrice'].apply(to_eth)
-                df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
+                # df['value'] = df['value'].apply(to_eth)
+                # df['gas'] = df['gas'].apply(to_eth)
+                # df['gasUsed'] = df['gasUsed'].apply(to_eth)
+                # df['gasPrice'] = df['gasPrice'].apply(to_eth)
+                # df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
                 # Convert the timestamp to a date
                 df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit="s")
                 df["functionName"] = df["functionName"].apply(lambda x: x[:x.find("(")])
@@ -161,9 +160,9 @@ def get_internal_transactions(addresses, api_key,args):
                 transactions = data["result"]
                 # Read the data into a dataframe
                 df = pd.DataFrame(transactions)
-                df['value'] = df['value'].apply(to_eth)
-                df['gas'] = df['gas'].apply(to_eth)
-                df['gasUsed'] = df['gasUsed'].apply(to_eth)
+                # df['value'] = df['value'].apply(to_eth)
+                # df['gas'] = df['gas'].apply(to_eth)
+                # df['gasUsed'] = df['gasUsed'].apply(to_eth)
                 # Convert the timestamp to a date
                 df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit="s")
 
@@ -243,11 +242,11 @@ def get_erc20_transactions(addresses, api_key,args):
                 transactions = data["result"]
                 # Read the data into a dataframe
                 df = pd.DataFrame(transactions)
-                df['value'] = df['value'].apply(to_eth)
-                df['gas'] = df['gas'].apply(to_eth)
-                df['gasUsed'] = df['gasUsed'].apply(to_eth)
-                df['gasPrice'] = df['gasPrice'].apply(to_eth)
-                df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
+                # df['value'] = df['value'].apply(to_eth)
+                # df['gas'] = df['gas'].apply(to_eth)
+                # df['gasUsed'] = df['gasUsed'].apply(to_eth)
+                # df['gasPrice'] = df['gasPrice'].apply(to_eth)
+                # df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
                 # Convert the timestamp to a date
                 df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit="s")
                 transactions_list.append(df)
@@ -323,10 +322,10 @@ def get_erc721_transactions(addresses, api_key,args):
                 transactions = data["result"]
                 # Read the data into a dataframe
                 df = pd.DataFrame(transactions)
-                df['gas'] = df['gas'].apply(to_eth)
-                df['gasUsed'] = df['gasUsed'].apply(to_eth)
-                df['gasPrice'] = df['gasPrice'].apply(to_eth)
-                df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
+                # df['gas'] = df['gas'].apply(to_eth)
+                # df['gasUsed'] = df['gasUsed'].apply(to_eth)
+                # df['gasPrice'] = df['gasPrice'].apply(to_eth)
+                # df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
                 # Convert the timestamp to a date
                 df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit="s")
                 transactions_list.append(df)
@@ -404,10 +403,10 @@ def get_erc1155_transactions(addresses, api_key,args):
                 transactions = data["result"]
                 # Read the data into a dataframe
                 df = pd.DataFrame(transactions)
-                df['gas'] = df['gas'].apply(to_eth)
-                df['gasUsed'] = df['gasUsed'].apply(to_eth)
-                df['gasPrice'] = df['gasPrice'].apply(to_eth)
-                df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
+                # df['gas'] = df['gas'].apply(to_eth)
+                # df['gasUsed'] = df['gasUsed'].apply(to_eth)
+                # df['gasPrice'] = df['gasPrice'].apply(to_eth)
+                # df['cumulativeGasUsed'] = df['cumulativeGasUsed'].apply(to_eth)
                 # Convert the timestamp to a date
                 df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit="s")
                 transactions_list.append(df)
